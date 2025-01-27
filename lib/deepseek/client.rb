@@ -3,17 +3,14 @@
 require "faraday"
 
 module Deepseek
-  DEFAULT_URL = "https://api.deepseek.com"
-  BETA_URL = "https://api.deepseek.com/beta"
-
   class Client
-    def initialize(api_key = nil, url = DEFAULT_URL)
-      @api_key = api_key || ENV.fetch("DEEPSEEK_API_KEY")
-      @url = url
-    end
+    DEFAULT_BASE_URL = "https://api.deepseek.com"
+    BETA_BASE_URL = "https://api.deepseek.com/beta"
 
-    def self.beta
-      new(nil, BETA_URL)
+    attr_reader :api_key, :base_url
+    def initialize(api_key = default_api_key, base_url = default_base_url)
+      @api_key = api_key || ENV.fetch("DEEPSEEK_API_KEY")
+      @base_url = base_url
     end
 
     def chat_completions(params)
@@ -35,13 +32,21 @@ module Deepseek
     private
 
     def conn
-      @conn ||= Faraday.new(url: @url) do |conn|
+      @conn ||= Faraday.new(url: base_url) do |conn|
         conn.request :json
         conn.response :json
-        conn.headers["Authorization"] = "Bearer #{@api_key}"
+        conn.headers["Authorization"] = "Bearer #{api_key}"
         conn.headers["Content-Type"] = "application/json"
         conn.adapter Faraday.default_adapter
       end
+    end
+
+    def default_api_key
+      ENV.fetch("DEEPSEEK_API_KEY")
+    end
+
+    def default_base_url
+      DEFAULT_BASE_URL
     end
 
     def handle_response(response)

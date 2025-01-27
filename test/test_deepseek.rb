@@ -17,7 +17,7 @@ class TestDeepseek < Minitest::Test
   end
 
   def test_fim_completions
-    client = Deepseek::Client.beta
+    client = Deepseek::Client.new(nil, Deepseek::Client::BETA_BASE_URL)
     response = client.fim_completions(
       model: "deepseek-chat",
       prompt: "The quick brown fox jumps over the lazy"
