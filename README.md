@@ -28,6 +28,18 @@ response = client.chat_completions(
 )
 ```
 
+```Rails
+# config/initializers/deepseek.rb
+Rails.application.config.deepseek_api_key = ENV["DEEPSEEK_API_KEY"]
+
+module DeepseekClient
+  def self.client
+    @client ||= Deepseek::Client.new(Rails.application.config.deepseek_api_key)
+  end
+end
+
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
